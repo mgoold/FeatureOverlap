@@ -1,7 +1,7 @@
 
 var margin = {top: 35, right: 200, bottom: 20, left: 80},
-    width = 960 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+    width = 960 - (margin.left + margin.right);
+    height = 400 - (margin.top + margin.bottom);
   
 var svg = d3.select("#d3space").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -9,20 +9,8 @@ var svg = d3.select("#d3space").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var svg_legend = d3.select("#d3space").append("svg")
-    .attr("width", width+margin.left)
-    .attr("height", 250)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var leg_grp=svg_legend.append("g");
-//         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 var data; // a global
 var coldomain=[];
-var coldomain2=[];
-var firstword;
-i=0;
 var ydomain=[];
 var xdomain=[];
 var grplists=[];
@@ -43,10 +31,11 @@ d3.json("testgrp.json", function(error, json) {
 
         var x = d3.scale.ordinal()
                 .domain(xdomain)
-                .rangeRoundBands([2, width],0.08);
+                .rangeRoundBands([0, width],0.08);
 
-		console.log('max',data.max);
+		console.log('max',data.max, 'height', height);
 
+		var max=data.max;
 		
         var xAxis = d3.svg.axis()
                 .scale(x)
@@ -55,13 +44,22 @@ d3.json("testgrp.json", function(error, json) {
 //        Y AXIS SECTION
 		
 		var y = d3.scale.linear()
+			.domain([max,0])
 			.range([0,height]);
-
-		y.domain([parseInt(data.max),0]);
-
+		
+		ylist=y.ticks();
+		
+		ylist.push(max);
+		
+		console.log('ticks',ylist);
+			
 		var yAxis = d3.svg.axis()
 			.scale(y)
 			.orient("left");
+ 
+ 		yAxis.tickValues(ylist);
+ 				
+ 		console.log('ticks',y.ticks());
                                 
 		for (grp in data.groups)
 			{
@@ -72,30 +70,62 @@ d3.json("testgrp.json", function(error, json) {
 			
 		console.log('coldomain',coldomain);
 
+//        READ LEGEND ITEMS INTO D3 DEFAULT ARRAY OF 20 COLOURS
+        var color = d3.scale.category20()
+                .domain(coldomain);
+        
+        console.log('color',color);
+                
+		catlength=coldomain.length;
+
 		tempy=0;
+		tempy0=0;
+		tempy1=0;
+		tempy2=0;
 		grpmaps=[];
-		grpmap=[];
+
 		
 		for (grp in grplists) {
+			grpmap=[];
+			tempy1=0;	
+			console.log('grplists[grp].length',grplists[grp].length);
 			for (var i=0; i<grplists[grp].length; i=i+2) {
 				var splitname='';
 				splitname=grplists[grp][i].split('-');
-				tempy=parseInt(tempy)+parseInt(grplists[grp][i+1]);				
+				tempy0=parseInt(grplists[grp][i+1]);	
+				console.log('tempy0',tempy0);
+// 				console.log('just added y0 and y1',	tempy1);
+// 				if (i==0){			
+// 					console.log('i=0');
+// 					tempy2=0;
+// 					}
+// 				else
+// 					{
+// 					console.log('i>0');
+// 					console.log('grpmap[i-1].y1',grpmap[i-1].y1);
+// 					tempy2=parseInt(grpmap[i-1].y1);
+// 					}
+// 				console.log('tempy1',tempy0,tempy1,tempy2);
 				for (var j=0; j<splitname.length; j++) {
 					tempname=splitname[j];
 					tempx=coldomain.indexOf(splitname[j]);
-
 // 					console.log('tempname',tempname,'tempx',tempx,'tempy',tempy);
 					var tempmap=function() {
-// 						console.log('tempname',tempname,'tempx',tempx,'tempy',tempy);
-						return{name:tempname,x0:tempx,y0:tempy};}
+						console.log('name',tempname,'x0',tempx,'y0',tempy0,'y1',tempy1);
+						return{indx:j,name:tempname,x0:tempx,y0:tempy0,y1:tempy1};
+				};
 // 					console.log('tempmap',tempmap());
-					grpmap.push(tempmap());
-			};		
-					
+				grpmap.push(tempmap());
+			};			
+			tempy1=tempy0+tempy1;	
 		};
-			grpmaps.push(grpmap);
-			tempy=0;			
+		
+			var tempgrp=function(){return{grp:xdomain[grp],rectvals:grpmap};}
+			
+			console.log('tempgrp',tempgrp());
+			
+			grpmaps.push(tempgrp());
+		
 		
 		};
 
@@ -130,5 +160,59 @@ d3.json("testgrp.json", function(error, json) {
                 .text("Users")
         ;
         
+		var month = svg.selectAll('.grp')
+			.data(grpmaps)
+			.enter()
+			.append('g')
+// 			.attr("class", "g")
+			.attr('transform', function (d, i) {
+				console.log('i',d.grp);
+			return 'translate(' + x(d.grp) + ', 0)';
+		});
+
+		month.selectAll("rect")
+			.data(function(grpmaps) {
+			return grpmaps.rectvals; })
+			.enter().append("rect")
+			.attr("height", function(d,i) { 
+				console.log('height',d.y0,d.y1 );
+				return y(max-d.y0);})
+			.attr("x", function(d,i) {
+				return (d.x0)*(x.rangeBand()/catlength);})
+			.attr("y", function(d,i) {		
+				console.log('y',d.y0+d.y1);		
+				return y(d.y0+d.y1);})
+			.attr("width", x.rangeBand()/catlength)
+			.style("fill", function(d) { return color(d.name); });
+
+		
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
