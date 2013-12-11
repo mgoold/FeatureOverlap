@@ -1,0 +1,9 @@
+
+.yAxis path,
+.xAxis path,
+.yAxis line,
+.xAxis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
