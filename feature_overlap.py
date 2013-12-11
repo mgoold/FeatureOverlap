@@ -14,13 +14,15 @@ class autoviv(dict):
 
 leg_dict=autoviv()
 
-filepath='/Users/mgoold/Documents/D3VizProjects/FeatureOverlap/FeatureOverlap2013.txt'
+filepath='/Users/mgoold/Documents/D3VizProjects/FeatureOverlapJanJulOct2013/FeatureOverlapFreeTrial.txt'
 mtrx=autoviv()
 mtrx['column_totals']=autoviv()
 
 csvfile=open(filepath,'rU')
 
 f = csv.reader(csvfile, delimiter='\t', quotechar="'")
+f.next()
+
 
 def count_col_totals(rowstr_obj,rowct):
 	for obj in rowstr_obj.split('--'):
@@ -28,24 +30,29 @@ def count_col_totals(rowstr_obj,rowct):
 			mtrx['column_totals'][obj]=int(mtrx['column_totals'][obj])+int(rowct)
 		else:
 			mtrx['column_totals'][obj]=int(rowct)
-		
+
+def legend_dict(rowstr_obj2):
+	for obj in rowstr_obj2.split('--'):
+		if obj.split('-')[0] not in leg_dict.keys():
+			leg_dict[obj.split('-')[0]]=obj.split('-')[1]
 
 def find_best_row_match(mtrx_obj,gb_val,rowstr_obj,rowct):
 
 # 	print 'in function', gb_val,rowstr_obj,rowct
 
 	rowstr_obj2=rowstr_obj
-	rowstr_obj='--'.join(sorted(subobj.split('-')[0] for subobj in rowstr_obj.split('--')))
+	rowstr_obj='--'.join(sorted(subobj.split('-')[1] for subobj in rowstr_obj.split('--')))
 # 	print 'rowstr_obj',rowstr_obj
 	
-	for subobj in rowstr_obj2.split('--'):
-		if subobj.split('-')[0] not in leg_dict.keys():
-			leg_dict[subobj.split('-')[0]]=subobj.split('-')[1]
+# 	for subobj in rowstr_obj2.split('--'):
+# 		if subobj.split('-')[0] not in leg_dict.keys():
+# 			leg_dict[subobj.split('-')[0]]=subobj.split('-')[1]
 	
 	templen=len(rowstr_obj2.split('--'))
 	newcount=rowct
 	
 	count_col_totals(rowstr_obj,rowct)
+	legend_dict(rowstr_obj2)
 	
 	if gb_val not in mtrx_obj['groups'].keys():
 # 		print 'didn\'t find group key'
@@ -63,18 +70,16 @@ def find_best_row_match(mtrx_obj,gb_val,rowstr_obj,rowct):
 		
 #	ELSE FIND THE ROW THAT HAS THE MOST ELEMENTS IN COMMON
 
-f.next()
-
-grpbycol=0
-featcol=2
-countcol=3
+grpbycol=2
+featcol=3
+countcol=4
 rowct=0
 mtrx['max']=0
-mtrx['maxcats']=''
-mtrx['coltotals']
+# mtrx['coltotals']
 
 for row in f:
-# 	print 'row', rowct
+# 	print 'row', rowct, row[grpbycol],row[featcol],row[countcol]
+	
 	find_best_row_match(mtrx,row[grpbycol],row[featcol],row[countcol])
 	rowct=rowct+1
 
@@ -107,6 +112,10 @@ while not sorted:
 			totlist[i+1] = hold
 
 mtrx['column_totals']=totlist	
+
+mtrx['maxcats']='--'.join(subobj[0] for subobj in mtrx['column_totals'])
+
+
 totlist=[]	
 
 for gb_val in mtrx['groups']:
@@ -138,6 +147,8 @@ for gb_val in mtrx['groups']:
 				templist[i] = templist[i+1]
 				templist[i+1] = hold	
 	
+# 	GET TOP 100 items in group.
+	
 	templist=templist[0:100]
 
 	sorted = False  # We haven't started sorting yet
@@ -156,20 +167,23 @@ for gb_val in mtrx['groups']:
 	
 	templist=[];
 	mtrx['groups'][gb_val]['sublegend']=[];
+	mtrx['groups'][gb_val]['subtotals']=autoviv();
 	tempsublegend=''
 	tempmax=0;
 		
 	for obj in mtrx['groups'][gb_val]['grplist']:
 # 		print 'obj', obj
-		tempmax=int(tempmax)+int(obj[1])
+		tempmax=int(tempmax)+int(obj[1])				
 		
 		for item in obj[0].split('--'):
 			if item not in mtrx['groups'][gb_val]['sublegend']:
 				mtrx['groups'][gb_val]['sublegend'].append(item)
-			
+				mtrx['groups'][gb_val]['subtotals'][item]=0
 		for i in obj:
 			templist.append(i)
 
+		mtrx['groups'][gb_val]['subtotals'][item]=int(mtrx['groups'][gb_val]['subtotals'][item])+int(obj[1])
+		
 	mtrx['groups'][gb_val]['grplist']=templist
 
 	templist=[]
@@ -193,19 +207,26 @@ for gb_val in mtrx['groups']:
 	if int(tempmax)>int(mtrx['max']):
 		mtrx['max']=int(tempmax)
 
-# mtrx['legend_dict']=leg_dict
+mtrx['legend_dict']=leg_dict
+# mtrx['final_legend']='--'.join(mtrx['legend_dict'][k] for k in mtrx['maxcats'].split('--'))
 
-for k in mtrx['legend_dict'].keys():
-	if mtrx['maxcats']=='':
-		mtrx['maxcats']=k
-	else:
-		mtrx['maxcats']=mtrx['maxcats']+'--'+k	
+# for k in mtrx['legend_dict'].keys():
+# 	if mtrx['maxcats']=='':
+# 		mtrx['maxcats']=k
+# 	else:
+# 		mtrx['maxcats']=mtrx['maxcats']+'--'+k	
 
 
 # print 'mtrx', mtrx
 
 # print 'printing mtrx'
-with open('/Users/mgoold/Documents/D3VizProjects/testgrp2013.json', 'wb') as fp:
+with open('/Users/mgoold/Documents/D3VizProjects/FeatureOverlapUserLevelFT2013.json', 'wb') as fp:
     json.dump(mtrx, fp)
 
 fp.close()
+
+
+
+
+
+
