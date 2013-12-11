@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+<link rel="stylesheet" type="text/css" href="OverlapCSS.css"></link>
+</head>
+<body>
+<div style="width: 100%; overflow: hidden;">
+		<div id="ctrlSpace"; style="width: 200px; float: left;">
+			<button id="btn_api1" type="button" style="display:block" onclick="getFeatureCoUse('FeatureOverlapUserTypeRegSub2013.json')">RegSub2013</button>
+			<button id="btn_api2" type="button" style="display:block" onclick="getFeatureCoUse('FeatureOverlapUserLevelFT2013.json')">FT2013</button>
+			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse('FeatureOverlapUserLevelJanJulOct2013.json')">JanJulOct2013</button>
+		</div>
+		<div id="d3space"; style="margin-left:220px;"></div>
+</div>
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="grp_overlap33.js"></script>
+<script type="text/javascript">
+	function getFeatureCoUse(jsonfile) {
+// 		console.log(jsonfile);
+		d3.selectAll("svg").remove();
+		var jsonarry=[];
+		jsonarry.push(jsonfile);
+	   MYLIBRARY.init(jsonarry);
+	   MYLIBRARY.helloWorld();
+   }
+</script>
+
+</html>
