@@ -14,7 +14,7 @@ class autoviv(dict):
 
 leg_dict=autoviv()
 
-filepath='/Users/mgoold/Documents/D3VizProjects/FeatureOverlapJanJulOct2013/FeatureOverlapFreeTrial.txt'
+filepath='FeatureOverlapDistinctPatternJanJulNov2013.txt'
 mtrx=autoviv()
 mtrx['column_totals']=autoviv()
 
@@ -38,7 +38,7 @@ def legend_dict(rowstr_obj2):
 
 def find_best_row_match(mtrx_obj,gb_val,rowstr_obj,rowct):
 
-# 	print 'in function', gb_val,rowstr_obj,rowct
+	print 'in function', gb_val,rowstr_obj,rowct
 
 	rowstr_obj2=rowstr_obj
 	rowstr_obj='--'.join(sorted(subobj.split('-')[1] for subobj in rowstr_obj.split('--')))
@@ -70,17 +70,22 @@ def find_best_row_match(mtrx_obj,gb_val,rowstr_obj,rowct):
 		
 #	ELSE FIND THE ROW THAT HAS THE MOST ELEMENTS IN COMMON
 
-grpbycol=2
-featcol=3
-countcol=4
+grpbycol=3
+featcol=4
+countcol=5
 rowct=0
 mtrx['max']=0
-# mtrx['coltotals']
+
 
 for row in f:
 # 	print 'row', rowct, row[grpbycol],row[featcol],row[countcol]
 	
 	find_best_row_match(mtrx,row[grpbycol],row[featcol],row[countcol])
+	
+# 	print 'row[grpbycol]',grpbycol,row[grpbycol]
+# 	print 'row[featcol]',featcol,row[featcol]
+# 	print 'row[countcol]',countcol,row[countcol]
+
 	rowct=rowct+1
 
 csvfile.close()
@@ -220,7 +225,7 @@ mtrx['legend_dict']=leg_dict
 # print 'mtrx', mtrx
 
 # print 'printing mtrx'
-with open('/Users/mgoold/Documents/D3VizProjects/FeatureOverlapUserLevelFT2013.json', 'wb') as fp:
+with open('FeatureOverlapDistinctPatternFTRegSub2013.json', 'wb') as fp:
     json.dump(mtrx, fp)
 
 fp.close()
