@@ -7,9 +7,13 @@
 <body>
 <div style="width: 100%; overflow: hidden;">
 		<div id="ctrlSpace"; style="width: 200px; float: left;">
-			<button id="btn_api1" type="button" style="display:block" onclick="getFeatureCoUse('FeatureOverlapUserTypeRegSub2013.json')">RegSub2013</button>
-			<button id="btn_api2" type="button" style="display:block" onclick="getFeatureCoUse('FeatureOverlapUserLevelFT2013.json')">FT2013</button>
-			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse('FeatureOverlapUserLevelJanJulOct2013.json')">JanJulOct2013</button>
+			<button id="btn_api1" type="button" style="display:block" onclick="getFeatureCoUse('FeatureOverlapSubReg2013.json')">Active Days by Co-use Pattern for Registrants, Subscribers 2013</button>
+			<button id="btn_api2" type="button" style="display:block" onclick="getFeatureCoUse('FeatureOverlapFT2013.json')">Active Days by Co-use Pattern for Free Trial 2013</button>
+			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse('FeatureOverlapJanJulNov2013.json')">Active Days by Co-use Pattern for Jan, Jul, Nov 2013</button>
+			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse('FeatureOverlapDistinctPatternJanJulNov2013.json')">Distinct Users by Co-use Pattern for Jan, Jul, Nov 2013</button>
+			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse('FeatureOverlapDistinctPatternFTRegSub2013.json')">Distinct Users by Co-use Pattern for FT, Reg, Sub 2013</button>
+
+
 		</div>
 		<div id="d3space"; style="margin-left:220px;"></div>
 </div>
