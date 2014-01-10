@@ -52,7 +52,7 @@ var MYLIBRARY = MYLIBRARY || (function(){
 					.domain(xdomain)
 					.rangeRoundBands([0, width],0.08);
 
-	// 		console.log('max',data.max, 'height', height);
+		console.log('max',data.max, 'height', height);
 
 			var max=data.max;
 		
@@ -68,7 +68,7 @@ var MYLIBRARY = MYLIBRARY || (function(){
 		
 			ylist=y.ticks();
 		
-	// 		ylist.push(max);
+		ylist.push(max);
 		
 	// 		console.log('ticks',ylist);
 			
@@ -208,11 +208,11 @@ var MYLIBRARY = MYLIBRARY || (function(){
 					.call(yAxis)
 					.append("text")
 					.attr("y", -17)
-					.attr("dy", ".71em")
+					.attr("dy", "-.25em")
 					.style("text-anchor", "middle")
 					.style("font-size", "16px")
 					.attr("transform", "translate(5,0), rotate(0)")
-					.text("Users")
+					.text("Total Users")
 			;
 		
 			var month = svg.selectAll('.grp')
@@ -249,9 +249,10 @@ var MYLIBRARY = MYLIBRARY || (function(){
 				.enter().append('text')
 				.text(function(d) {
 	// 				console.log('d',d.val);
-					var prefix = d3.formatPrefix(d.val,'.1s');
-	// 				console.log(prefix.scale(d.val,'.1s'));
-					return prefix.scale(d.val).toFixed(1).toString()+prefix.symbol ;
+					return d.val;
+// 					var prefix = d3.formatPrefix(d.val,'.4s');
+// 	// 				console.log(prefix.scale(d.val,'.1s'));
+// 					return prefix.scale(d.val).toFixed(1).toString()+prefix.symbol ;
 				})
 				.attr('x',function(d) {
 					return d.x0;
@@ -307,25 +308,3 @@ var MYLIBRARY = MYLIBRARY || (function(){
         }
     };
 }());
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
