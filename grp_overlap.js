@@ -30,6 +30,7 @@ var MYLIBRARY = MYLIBRARY || (function(){
 	var coldomain=[];
 	var ydomain=[];
 	var xdomain=[];
+	var	grppresort=[];
 	var grplists=[];
 	var subtotals=[];
 	var lastposxngrps=[];
@@ -68,7 +69,7 @@ var MYLIBRARY = MYLIBRARY || (function(){
 		
 			ylist=y.ticks();
 		
-		ylist.push(max);
+			ylist.push(max);
 		
 	// 		console.log('ticks',ylist);
 			
@@ -83,8 +84,19 @@ var MYLIBRARY = MYLIBRARY || (function(){
 				.orient("left");
  
 			yAxis.tickValues(ylist);
-				
+// 				
 	//  		console.log('ticks',y.ticks());
+
+
+	// 		pre sort groups by key value
+			
+			for (grp in data.groups)
+			{
+				console.log('grp',grp);
+				grppresort.push(grp);
+			};	
+			
+			console.log('presortlist',grppresort); 	
 								
 			for (grp in data.groups)
 			{
@@ -202,18 +214,18 @@ var MYLIBRARY = MYLIBRARY || (function(){
 					.text("Month")
 			;
 
-	//        Y AXIS TITLE
-			svg.append("g")
-					.attr("class", "yAxis")
-					.call(yAxis)
-					.append("text")
-					.attr("y", -17)
-					.attr("dy", "-.25em")
-					.style("text-anchor", "middle")
-					.style("font-size", "16px")
-					.attr("transform", "translate(5,0), rotate(0)")
-					.text("Total Users")
-			;
+//        Y AXIS TITLE
+// 			svg.append("g")
+// 					.attr("class", "yAxis")
+// 					.call(yAxis)
+// 					.append("text")
+// 					.attr("y", -17)
+// 					.attr("dy", "-.25em")
+// 					.style("text-anchor", "middle")
+// 					.style("font-size", "16px")
+// 					.attr("transform", "translate(5,0), rotate(0)")
+// 					.text("Total Users")
+// 			;
 		
 			var month = svg.selectAll('.grp')
 				.data(grpmaps)
@@ -249,10 +261,9 @@ var MYLIBRARY = MYLIBRARY || (function(){
 				.enter().append('text')
 				.text(function(d) {
 	// 				console.log('d',d.val);
-					return d.val;
-// 					var prefix = d3.formatPrefix(d.val,'.4s');
-// 	// 				console.log(prefix.scale(d.val,'.1s'));
-// 					return prefix.scale(d.val).toFixed(1).toString()+prefix.symbol ;
+					var prefix = d3.formatPrefix(d.val,'.4s');
+	// 				console.log(prefix.scale(d.val,'.1s'));
+					return prefix.scale(d.val).toFixed(1).toString()+prefix.symbol ;
 				})
 				.attr('x',function(d) {
 					return d.x0;
