@@ -7,13 +7,13 @@
 <body>
 <div style="width: 100%; overflow: hidden;">
 		<div id="ctrlSpace"; style="width: 200px; float: left;">
-			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse('FeatureCoUseNov2013.1.10.14.json')">FeatureCoUseNov2013.1.10.14</button>
-			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse('FeatureCoUseNov2013.1.10.14byUser.json')">FeatureCoUseNov2013.1.10.14byUser</button>
-			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse2('FeatureCoUseNov2013.1.10.14byUser.json')">FeatureCoUseNov2013.1.10.14byUserPct</button>
+		
+			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse2('FeatureCoUseNov2013.1.10.14.json',1)">FeatureCoUseNov2013.1.10.14</button>
+			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse2('FeatureCoUseNov2013.1.10.14byUser.json',1)">FeatureCoUseNov2013.1.10.14byUser</button>
+			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse2('FeatureCoUseNov2013.1.10.14byUser.json',2)">FeatureCoUseNov2013.1.10.14byUserPct</button>
 
-<!-- 			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse('FeatureCoUseJanJulNov2013.1.10.14.json')">FeatureCoUseJanJulNov2013.1.10.14</button> -->
-			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse('FeatureCoUse2013ActiveDaysbyUser.1.10.14.json')">CoUse2013ActiveDaysbyUser.1.10.14</button>
-			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse2('FeatureCoUse2013ActiveDaysbyUser.1.10.14.json')">CoUse2013ActDaysUserPct.1.10.14</button>
+			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse2('FeatureCoUse2013ActiveDaysbyUser.1.10.14.json',1)">CoUse2013ActiveDaysbyUser.1.10.14</button>
+			<button id="btn_api3" type="button" style="display:block" onclick="getFeatureCoUse2('FeatureCoUse2013ActiveDaysbyUser.1.10.14.json',2)">CoUse2013ActDaysUserPct.1.10.14</button>
 
 		</div>
 		<div id="d3space"; style="margin-left:220px;"></div>
@@ -21,26 +21,17 @@
 </div>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<script src="grp_overlap33.js"></script>
+
 <script src="grp_overlap34.js"></script>
 <script type="text/javascript">
-	function getFeatureCoUse(jsonfile) {
+	function getFeatureCoUse2(jsonfile,typeint) {
 // 		console.log(jsonfile);
 		d3.selectAll("svg").remove();
 		var jsonarry=[];
 		jsonarry.push(jsonfile);
-	   MYLIBRARY.init(jsonarry);
-	   MYLIBRARY.helloWorld();
-   }
-</script>
-<script type="text/javascript">
-	function getFeatureCoUse2(jsonfile) {
-// 		console.log(jsonfile);
-		d3.selectAll("svg").remove();
-		var jsonarry=[];
-		jsonarry.push(jsonfile);
+		jsonarry.push(typeint);
 	   MYLIBRARY2.init(jsonarry);
-	   MYLIBRARY2.helloWorld();
+	   MYLIBRARY2.co_usage();
    }
 </script>
 </html>
