@@ -1,4 +1,4 @@
-var MYLIBRARY = MYLIBRARY || (function(){
+var MYLIBRARY2 = MYLIBRARY2 || (function(){
     var jsonfile = {}; // private
 
     return {
@@ -6,9 +6,12 @@ var MYLIBRARY = MYLIBRARY || (function(){
             jsonfile = Args;
             // some other initialising
         },
-        helloWorld : function() {
-//             alert('Hello World! -' + jsonfile[0]);
+        co_usage : function() {
+//             alert('Hello World! ' + jsonfile[1]);
 
+	var formatflag=jsonfile[1];
+
+	
 	var margin = {top: 35, right: 200, bottom: 30, left: 80},
 		width = 1400 - (margin.left + margin.right);
 		height = 450  - (margin.top + margin.bottom);
@@ -25,6 +28,12 @@ var MYLIBRARY = MYLIBRARY || (function(){
 	  .append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+	var div = d3.select("body").append("div")   
+		.attr("class", "tooltip")               
+		.style("opacity", 0);
+
+	var click_store = function (d) {console.log('d',d.name);};
+
 	var leg_grp=svg_legend.append("g");
 	var data; // a global
 	var coldomain=[];
@@ -39,7 +48,7 @@ var MYLIBRARY = MYLIBRARY || (function(){
 			if (error) return console.warn(error)
 					data=json
 
-	//         console.log('data',data);
+//         console.log('data',data);
 
 	//		X AXIS        
 			for (grp in data.groups) {
@@ -53,7 +62,7 @@ var MYLIBRARY = MYLIBRARY || (function(){
 					.domain(xdomain)
 					.rangeRoundBands([0, width],0.08);
 
-		console.log('max',data.max, 'height', height);
+// 		console.log('max',data.max, 'height', height);
 
 			var max=data.max;
 		
@@ -62,50 +71,55 @@ var MYLIBRARY = MYLIBRARY || (function(){
 					.orient("bottom");
 
 	//        Y AXIS SECTION
-		
-			var y = d3.scale.linear()
-				.domain([max,0])
-				.range([0,height]);
-		
-			ylist=y.ticks();
-		
-			ylist.push(max);
-		
-	// 		console.log('ticks',ylist);
 			
-			var yAxis = d3.svg.axis()
-				.scale(y)
-				.tickFormat(function(d) {
-	// 				console.log('d',d.val);
-					var prefix = d3.formatPrefix(d,'.1s');
-	// 				console.log(prefix.scale(d.val,'.1s'));
-					return prefix.scale(d).toFixed(1).toString()+prefix.symbol;
-				})
-				.orient("left");
+			if (formatflag==1){
+			
+				// Formatting for abs values
+				console.log('Formatting for abs values');
+				var y = d3.scale.linear()
+					.domain([max,0])
+					.range([0,height]);
+				
+				ylist=y.ticks();		
+				ylist.push(max);		
+
+				
+				var yAxis = d3.svg.axis()
+					.scale(y)
+					.tickFormat(function(d) {
+		// 				console.log('d',d.val);
+						var prefix = d3.formatPrefix(d,'.1s');
+		// 				console.log(prefix.scale(d.val,'.1s'));
+						return prefix.scale(d).toFixed(1).toString()+prefix.symbol;
+					})
+					.orient("left");
  
-			yAxis.tickValues(ylist);
-// 				
-	//  		console.log('ticks',y.ticks());
-
-
-	// 		pre sort groups by key value
+				yAxis.tickValues(ylist);
+					
+				
+			}
+			else
+			{	
+				// Formatting for percents
+				console.log('formatting yAxis');
+				var y = d3.scale.linear()
+					.rangeRound([height, 0]);
+					
+				var yAxis = d3.svg.axis()
+				.scale(y)
+				.orient("left")
+				.tickFormat(d3.format(".0%"));					
+			};
 			
-			for (grp in data.groups)
-			{
-				console.log('grp',grp);
-				grppresort.push(grp);
-			};	
-			
-			console.log('presortlist',grppresort); 	
 								
 			for (grp in data.groups)
 			{
-				console.log('grp',grp);
+
 				grplists.push(data.groups[grp]);
-				subtotals.push(data.groups[grp].subtotals);
+				subtotals.push(data.groups[grp].grand_total);
 			};
 
-	// 		console.log('grplists',grplists);
+// 		console.log('subtotals',subtotals);
 
 			coldomain=data.maxcats.split('--');
 			
@@ -124,21 +138,22 @@ var MYLIBRARY = MYLIBRARY || (function(){
 			tempy1=0;
 			tempy2=0;
 			grpmaps=[];
-
 		
 			for (grp in grplists) {
-	// 			console.log('grp',grp);
+// 				console.log('grp',grp);
 				grpmap=[];
 				var lastposxns=[];
 				var lastposxns2=[];
+				var subtotal=subtotals[grp];
 				tempy1=0;	
 				ypos=0;
 				coltotal=0;
-	// 			console.log('grplists[grp]',grplists[grp]);
+// 				console.log('grplists[grp]',grplists[grp]);
 				templist=grplists[grp].grplist;
-	// 			console.log('sublegend',grplists[grp].sublegend);
-			
+// 				console.log('subtotal',subtotal);
+
 				splitsublegend=grplists[grp].sublegend.split('--');
+				catlength=splitsublegend.length;
 			
 				for (var i=0; i<templist.length; i=i+2) {
 					ypos=0;
@@ -151,10 +166,10 @@ var MYLIBRARY = MYLIBRARY || (function(){
 	// 					console.log('tempname',tempname);
 						tempx=splitsublegend.indexOf(tempname);
 
-						catlength=splitsublegend.length;
+						
 						var tempmap=function() {
-		// 						console.log('name',tempname,'x0',tempx,'y0',tempy0,'y1',tempy1);
-							return{indx:j,name:tempname,x0:tempx,y0:tempy0,y1:tempy1,len:catlength};					
+// 							console.log('name',tempname,'x0',tempx,'y0',tempy0,'y1',tempy1, 'subtot', subtotal);
+							return{indx:j,name:tempname,x0:tempx,y0:tempy0,y1:tempy1,len:catlength, subtot:subtotal,subleg:grplists[grp].sublegend,grpnum:grp};					
 						};
 
 						ypos=tempy0+tempy1;	
@@ -185,7 +200,7 @@ var MYLIBRARY = MYLIBRARY || (function(){
 						tempy=lastposxns[i+1];
 						val=lastposxns[i+2];
 						var tempposxn=function(){
-							return{val:val, x0:tempx, y0:tempy};
+							return{val:val, x0:tempx, y0:tempy, subtot:subtotal};
 						};
 						lastposxns2.push(tempposxn());
 					};
@@ -214,19 +229,32 @@ var MYLIBRARY = MYLIBRARY || (function(){
 					.text("Month")
 			;
 
-//        Y AXIS TITLE
-// 			svg.append("g")
-// 					.attr("class", "yAxis")
-// 					.call(yAxis)
-// 					.append("text")
-// 					.attr("y", -17)
-// 					.attr("dy", "-.25em")
-// 					.style("text-anchor", "middle")
-// 					.style("font-size", "16px")
-// 					.attr("transform", "translate(5,0), rotate(0)")
-// 					.text("Total Users")
-// 			;
-		
+			if (formatflag==1){
+// 				FORMATTING FOR ABS VALUES
+// 			   Y AXIS TITLE
+					console.log('appending yAxis FOR ABS VALUES');
+					svg.append("g")
+							.attr("class", "yAxis")
+							.call(yAxis)
+							.append("text")
+							.attr("y", -17)
+							.attr("dy", "-.25em")
+							.style("text-anchor", "middle")
+							.style("font-size", "16px")
+							.attr("transform", "translate(5,0), rotate(0)")
+							.text("Total Users")
+					;			
+			}
+			else
+			{
+				// 			FORMATTING FOR % VALUES			
+				console.log('appending yAxis FOR % VALUES');
+				//        Y AXIS
+				  svg.append("g")
+					  .attr("class", "yAxis")
+					  .call(yAxis);
+			};
+
 			var month = svg.selectAll('.grp')
 				.data(grpmaps)
 				.enter()
@@ -237,7 +265,9 @@ var MYLIBRARY = MYLIBRARY || (function(){
 				return 'translate(' + x(d.grp) + ', 0)';
 			});
 
-			month.selectAll("rect")
+			if (formatflag==1){
+				console.log('FORMATTING text FOR ABS VALUES');
+				month.selectAll("rect")
 				.data(function(grpmaps) {
 				return grpmaps.rectvals; })
 				.enter().append("rect")
@@ -253,27 +283,106 @@ var MYLIBRARY = MYLIBRARY || (function(){
 				.attr("width", function(d){ return x.rangeBand()/d.len;})
 				.style("fill", function(d) { return color(d.name); });
 
-			month.selectAll("text")
-				.data(function(grpmaps) {		
-					console.log('grpmaps',grpmaps.tottext);	
-					return grpmaps.tottext;
-				})
-				.enter().append('text')
-				.text(function(d) {
-	// 				console.log('d',d.val);
-					var prefix = d3.formatPrefix(d.val,'.4s');
-	// 				console.log(prefix.scale(d.val,'.1s'));
-					return prefix.scale(d.val).toFixed(1).toString()+prefix.symbol ;
-				})
-				.attr('x',function(d) {
-					return d.x0;
-				})
-				.attr('y',function(d) {
-					return y(d.y0);
-				})
-				.attr("font-size", "9px")
-				;
+			}
+			else
+			{
+				console.log('FORMATTING Text FOR pct VALUES');
+				month.selectAll("rect")
+				.data(function(grpmaps) {
+				return grpmaps.rectvals; })
+				.enter().append("rect")
+				.attr("height", function(d,i) { 
+// 					if (d.subleg='CV-Content_View--NS-New_Searches') {
+// // 											return{indx:j,name:tempname,x0:tempx,y0:tempy0,y1:tempy1,len:catlength, subtot:subtotal,subleg:grplists[grp].sublegend,grpnum:grp};					
+// 						if (d.grpnum==0) {
+// 							if (d.y0==18704) {
+// 								console.log(d.name, d.y0, d.y1, d.subleg, d.subtot,d.grpnum, d.y0/d.subtot, y(1-d.y0/d.subtot))
+// 							}
+// 						}
+// 					}
+					return y(1-d.y0/d.subtot);})  // this is the amount from the overall chart max minus the current value, 
+						// which is then cast proportionally in terms of the y scale
+				.attr("x", function(d,i) {
+	// 				console.log('x',d.x0);
+					return (d.x0)*(x.rangeBand()/d.len);})
+				.attr("y", function(d,i) {		
+// 				console.log('y',y(d.y0/subtotal+d.y1/subtotal));
+// 					return d.y0/d.subtotal+d.y1/d.subtotal;})
+					return y(d.y0/d.subtot+d.y1/d.subtot);})
+				.attr("width", function(d){ return x.rangeBand()/d.len;})
+				.style("fill", function(d) { return color(d.name); });
+			};
+
 			
+			month.selectAll("rect")
+				.on("click", function(d) {click_store(d);})
+				.on("mouseover", function(d) {      
+					div.transition()        
+						.duration(200)      
+						.style("opacity", .9);      
+					div .html(d.name + "<br/>" + d.y0)  
+						.style("left", (d3.event.pageX) + "px")     
+						.style("top", (d3.event.pageY - 28) + "px");    
+					})                  
+				.on("mouseout", function(d) {       
+					div.transition()        
+						.duration(500)      
+						.style("opacity", 0);   
+				});
+
+			if (formatflag==1){
+ 				console.log('FORMATTING text FOR ABS VALUES')
+//				FORMATTING FOR ABS VALUES
+
+				month.selectAll("text")
+					.data(function(grpmaps) {		
+// 						console.log('grpmaps',grpmaps.tottext);	
+						return grpmaps.tottext;
+					})
+					.enter().append('text')
+					.text(function(d) {
+		// 				console.log('d',d.val);
+						var prefix = d3.formatPrefix(d.val,'.4s');
+		// 				console.log(prefix.scale(d.val,'.1s'));
+						return prefix.scale(d.val).toFixed(1).toString()+prefix.symbol ;
+					})
+					.attr('x',function(d) {
+						return d.x0;
+					})
+					.attr('y',function(d) {
+						return y(d.y0);
+					})
+					.attr("font-size", "9px")
+					;
+
+			}
+			else
+			{
+				month.selectAll("text")
+				console.log('FORMATTING text FOR pct VALUES')
+					.data(function(grpmaps) {		
+	// 					console.log('grpmaps',grpmaps.tottext);	
+						return grpmaps.tottext;
+					})
+					.enter().append('text')
+					.text(function(d) {
+						var formatter=d3.format(".1%");
+						return formatter(d.val/d.subtot);
+	// 					return prefix(1-d.val/d.subtot,'.1d');
+	// 					console.log('d',d.val);
+	// 					var prefix = d3.formatPrefix(d.val,'.4s');
+		// 				console.log(prefix.scale(d.val,'.1s'));
+	// 					return prefix.scale(d.val).toFixed(1).toString()+prefix.symbol ;
+					})
+					.attr('x',function(d) {
+						return d.x0;
+					})
+					.attr('y',function(d) {
+						return y(d.y0/d.subtot);
+					})
+					.attr("font-size", "9px")
+					;
+			};
 			
 
 	// legend section
@@ -319,3 +428,8 @@ var MYLIBRARY = MYLIBRARY || (function(){
         }
     };
 }());
+
+
+
+
+
